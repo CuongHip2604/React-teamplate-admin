@@ -3,7 +3,8 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { CContainer, CFade } from "@coreui/react";
 
 // routes config
-import routes from "../../routes";
+import routes from "../../router";
+import RouteWithSubRoutes from "../../router/RouteWithSubRoutes";
 
 const loading = (
   <div className="pt-3 text-center">
@@ -25,7 +26,12 @@ const TheContent = () => {
                     path={route.path}
                     name={route.name}
                     render={(props) => (
-                      <CFade>{/* <route.component {...props} /> */}</CFade>
+                      <CFade>
+                        {
+                          /* <route.component {...props} /> */
+                          <RouteWithSubRoutes key={idx} {...route} />
+                        }
+                      </CFade>
                     )}
                   />
                 )

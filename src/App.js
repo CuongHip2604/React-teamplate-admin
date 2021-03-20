@@ -18,8 +18,8 @@ const Login = React.lazy(() => import("./modules/authentication/pages/Login"));
 const Register = React.lazy(() =>
   import("./modules/authentication/pages/Register")
 );
-const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
-const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
+const Page404 = React.lazy(() => import("./shared/pages/page404/Page404"));
+const Page500 = React.lazy(() => import("./shared/pages/page500/Page500"));
 
 const App = () => {
   const isLoading = useSelector((state) => state.globalStore.loading);
