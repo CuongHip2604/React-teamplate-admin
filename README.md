@@ -59,16 +59,16 @@ CoreUI-React#v3.0.0
 ├── src/             #project root
 │   ├── assets/      #assets - js icons object
 │   ├── modules/     #container source - template layout
-|   │   ├── nav.js  #sidebar config
+|   │   ├── nav.js   #sidebar config
 |   │   └── ...
 │   ├── scss/        #user scss/css source
-│   ├── shared/       #views source
+│   ├── shared/      #views source
 │   ├── App.js
 │   ├── App.test.js
 │   ├── polyfill.js
 │   ├── index.js
-│   ├── routes.js    #routes config
-│   └── store.js     #template state example
+│   ├── routes       #routes config
+│   └── store        #template state example
 │
 └── package.json
 ```
