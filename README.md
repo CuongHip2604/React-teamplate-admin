@@ -17,18 +17,6 @@ $ cd React-teamplate-admin
 $ npm install
 ```
 
-### Copy and Paste
-
-Copy all your files to your project folder and then,
-
-```bash
-# go into app's directory
-$ cd React-teamplate-admin
-
-# install app's dependencies
-$ npm install
-```
-
 ### Basic usage
 
 ```bash
@@ -52,7 +40,7 @@ $ npm run build
 Within the download you'll find the following directories and files, logically grouping common assets and providing both compiled and minified variations. You'll see something like this:
 
 ```
-CoreUI-React#v3.0.0
+React-base
 ├── public/          #static files
 │   └── index.html   #html template
 │
