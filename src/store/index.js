@@ -1,4 +1,20 @@
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import {
+  combineReducers,
+  configureStore,
+  createSlice,
+  getDefaultMiddleware,
+} from "@reduxjs/toolkit";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import modules from "./modules";
 
 const initialState = {
@@ -6,8 +22,8 @@ const initialState = {
   loading: false,
 };
 
-const globalStore = createSlice({
-  name: "globalStore",
+const root = createSlice({
+  name: "root",
   initialState,
   reducers: {
     SET(state, action) {
@@ -17,14 +33,31 @@ const globalStore = createSlice({
   },
 });
 
-const { actions, reducer } = globalStore;
+const { actions, reducer } = root;
 export const { SET } = actions;
-const rootReducers = {
+
+const rootReducers = combineReducers({
   ...modules,
-  globalStore: reducer,
+  root: reducer,
+});
+
+const persistConfig = {
+  key: "root",
+  storage,
+  whitelist: ["authentication"],
 };
 
+const persistedReducer = persistReducer(persistConfig, rootReducers);
+
 const store = configureStore({
-  reducer: rootReducers,
+  reducer: persistedReducer,
+  middleware: getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }),
 });
+
+export const persistor = persistStore(store);
+
 export default store;

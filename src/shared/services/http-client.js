@@ -1,7 +1,13 @@
 import axios from "axios";
+import { logout } from "src/modules/authentication/store";
+import history from "src/router/history";
 import store, { SET } from "../../store";
+import { showToastr } from "../plugins/toastr";
 
 let loader = null;
+let isAlreadyFetchingAccessToken = false;
+let refreshToken = null;
+
 const httpClient = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,
   timeout: `${process.env.REACT_APP_TIMEOUT}`,
@@ -32,7 +38,6 @@ httpClient.interceptors.response.use(
       loader = false;
       store.dispatch(SET(["loading", loader]));
     }
-    // response.data = mappingResponseConvention(response.data)
     return response;
   },
   async (error) => {
@@ -55,49 +60,63 @@ export const callAPI = (method, path, body, config = {}) => {
       res = httpClient[method.toLowerCase()](path, body, config);
   }
 
-  return res.catch(async (error) => {
-    if (!error.config?.skipErrorHandle) {
-      switch (error.response?.status) {
-        case 400: // Wrong url or params
-          console.log(111, error.response?.data.message[0].messages[0].message);
-          if (
-            error.response?.data.message[0]?.messages[0]?.message &&
-            !error.config?.skipToast
-          ) {
+  return res
+    .then((res) => {
+      isAlreadyFetchingAccessToken = false;
+      return res;
+    })
+    .catch(async (error) => {
+      if (!error.config?.skipErrorHandle) {
+        switch (error.response?.status) {
+          case 400: // Wrong url or params
+            if (
+              error.response?.data.message[0].messages[0].message &&
+              !error.config?.skipToast
+            ) {
+              showToastr(
+                error.response?.data.message[0].messages[0].message,
+                "error"
+              );
+              break;
+            } else
+              throw (
+                error.response?.data.message[0]?.messages[0]?.message || error
+              );
+          case 404: // Missing parameters | Missing upload file
+          case 409: // Conflict
+          case 500: // Server error
+            // Show toastr if error code global, likes: 500 Unknow Error
+            // Other: handled in vue component catch
+            if (!error.response?.data?.message && !error.config?.skipToast) {
+              // CustomToastr.error(error.response?.data?.message || error.message)
+              break;
+            } else throw error.response?.data?.message || error;
+          case 403: // Permission
+            // await store.dispatch(`authentication/${LOGOUT}`)
             break;
-          } else
-            throw (
-              error.response?.data.message[0]?.messages[0]?.message || error
-            );
-        case 404: // Missing parameters | Missing upload file
-        case 409: // Conflict
-        case 500: // Server error
-          // Show toastr if error code global, likes: 500 Unknow Error
-          // Other: handled in vue component catch
-          if (!error.response?.data?.message && !error.config?.skipToast) {
-            // CustomToastr.error(error.response?.data?.message || error.message)
-            break;
-          } else throw error.response?.data?.message || error;
-        case 403: // Permission
-          // await store.dispatch(`authentication/${LOGOUT}`)
-          break;
-        case 401: // Signature verification failed | Token has been revoked
-          // check url # refresh token
-          // true: try to refresh access token. then call queue apis
-          // else: logout
-          // if (path !== "auth/refresh") {
-          // 	await store.dispatch(`authentication/${REFRESH_TOKEN}`)
-          // 	return callAPI(method, path, body, config)
-          // } else {
-          // 	store.commit(`authentication/${REFRESH_TOKEN_ERROR}`)
-          // 	CustomToastr.error(error.response?.data?.message || error.message)
-          // 	router.push("/login")
-          // 	throw error.response?.data?.detail || error
-          // }
-          break;
-        default:
-          throw error.response?.data?.detail || error;
+          case 401: // Signature verification failed | Token has been revoked
+            // check url # refresh token
+            // true: try to refresh access token. then call queue apis
+            // else: logout
+
+            if (path !== "auth/refresh") {
+              if (!isAlreadyFetchingAccessToken) {
+                isAlreadyFetchingAccessToken = true;
+                refreshToken = new Promise((resolve) => {
+                  // dispatch action call refresh token
+                  resolve();
+                });
+              }
+              await refreshToken;
+              return callAPI(method, path, body, config);
+            } else {
+              store.dispatch(logout());
+              history.push("/register");
+              throw error.response?.data?.detail || error;
+            }
+          default:
+            throw error.response?.data?.detail || error;
+        }
       }
-    }
-  });
+    });
 };

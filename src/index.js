@@ -10,16 +10,19 @@ import * as serviceWorker from "./serviceWorker";
 import { icons } from "./assets/icons";
 
 import { Provider } from "react-redux";
-import store from "./store";
+import store, { persistor } from "./store";
 import { SnackbarProvider } from "notistack";
+import { PersistGate } from "redux-persist/integration/react";
 
 React.icons = icons;
 
 ReactDOM.render(
   <Provider store={store}>
-    <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-      <App />
-    </SnackbarProvider>
+    <PersistGate loading={null} persistor={persistor}>
+      <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <App />
+      </SnackbarProvider>
+    </PersistGate>
   </Provider>,
   document.getElementById("root")
 );

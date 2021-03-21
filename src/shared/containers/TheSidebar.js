@@ -20,7 +20,7 @@ import navigation from "./_nav";
 
 const TheSidebar = () => {
   const dispatch = useDispatch();
-  const show = useSelector((state) => state.globalStore.sidebarShow);
+  const show = useSelector((state) => state.root.sidebarShow);
 
   const onShowChange = (val) => {
     dispatch(SET(["sidebarShow", val]));

@@ -5,17 +5,19 @@ const initialState = {
   currentUser: {},
 };
 
-export const login = createAsyncThunk("auth/login", async (params) => {
-  const res = await API.login(params);
-  localStorage.setItem("accessToken", res.jwt);
-  return res.user;
-});
+export const login = createAsyncThunk(
+  "authentication/login",
+  async (params) => {
+    const res = await API.login(params);
+    localStorage.setItem("accessToken", res.jwt);
+    return res.user;
+  }
+);
 
 export const handleRegister = createAsyncThunk(
-  "auth/register",
+  "authentication/register",
   async (params) => {
     const res = await API.register(params);
-    localStorage.setItem("accessToken", res.jwt);
     return res.user;
   }
 );
@@ -31,9 +33,6 @@ const store = createSlice({
   },
   extraReducers: {
     [login.fulfilled]: (state, action) => {
-      state.currentUser = action.payload;
-    },
-    [handleRegister.fulfilled]: (state, action) => {
       state.currentUser = action.payload;
     },
   },

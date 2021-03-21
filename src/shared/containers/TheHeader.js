@@ -26,7 +26,7 @@ import { SET } from "src/store";
 
 const TheHeader = () => {
   const dispatch = useDispatch();
-  const sidebarShow = useSelector((state) => state.globalStore.sidebarShow);
+  const sidebarShow = useSelector((state) => state.root.sidebarShow);
 
   const toggleSidebar = () => {
     const val = [true, "responsive"].includes(sidebarShow)

@@ -23,7 +23,8 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { login } from "../store";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { useSnackbar } from "notistack";
+import { toast } from "react-toastify";
+import { showToastr } from "src/shared/plugins/toastr";
 
 const Login = () => {
   const emailIsvalid = "The email is invalid";
@@ -46,7 +47,6 @@ const Login = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleLogin = async (loginForm) => {
     try {
@@ -57,8 +57,8 @@ const Login = () => {
       delete params.email;
       const res = await dispatch(login(params));
       unwrapResult(res);
+      showToastr("Login Successfully!!", "success");
       reset();
-      enqueueSnackbar("Login Successfully", { variant: "success" });
       history.push("/");
     } catch (error) {}
   };

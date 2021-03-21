@@ -1,8 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { HashRouter, Redirect, Route, Switch } from "react-router-dom";
+import { Router, Redirect, Route, Switch } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import history from "./router/history";
 import "./scss/style.scss";
 import Loading from "./shared/plugins/loading";
+import "react-toastify/dist/ReactToastify.css";
 
 const loading = (
   <div className="pt-3 text-center">
@@ -22,7 +25,7 @@ const Page404 = React.lazy(() => import("./shared/pages/page404/Page404"));
 const Page500 = React.lazy(() => import("./shared/pages/page500/Page500"));
 
 const App = () => {
-  const isLoading = useSelector((state) => state.globalStore.loading);
+  const isLoading = useSelector((state) => state.root.loading);
 
   const handleRedirec = () => {
     const token = localStorage.getItem("accessToken");
@@ -31,7 +34,7 @@ const App = () => {
   };
   return (
     <div>
-      <HashRouter>
+      <Router history={history}>
         <React.Suspense fallback={loading}>
           <Switch>
             <Route
@@ -83,8 +86,9 @@ const App = () => {
             />
           </Switch>
         </React.Suspense>
-      </HashRouter>
+      </Router>
       <Loading loading={isLoading} />
+      <ToastContainer />
     </div>
   );
 };
