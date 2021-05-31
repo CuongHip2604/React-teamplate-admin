@@ -23,7 +23,6 @@ import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { login } from "../store";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 import { showToastr } from "src/shared/plugins/toastr";
 
 const Login = () => {

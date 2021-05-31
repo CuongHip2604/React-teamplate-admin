@@ -11,7 +11,6 @@ import { icons } from "./assets/icons";
 
 import { Provider } from "react-redux";
 import store, { persistor } from "./store";
-import { SnackbarProvider } from "notistack";
 import { PersistGate } from "redux-persist/integration/react";
 
 React.icons = icons;
@@ -19,9 +18,7 @@ React.icons = icons;
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-        <App />
-      </SnackbarProvider>
+      <App />
     </PersistGate>
   </Provider>,
   document.getElementById("root")
